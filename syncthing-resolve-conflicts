@@ -7,6 +7,7 @@ declare -r myname='syncthing-resolve-conflicts'
 declare -r myver='1.0.0'
 
 diffprog=${DIFFPROG:-'vim -d'}
+dirs=${SYNCTHING_DIRS:-'/home/'}
 USE_COLOR='y'
 declare -a ignored
 declare -a nontext
@@ -70,8 +71,6 @@ ${myname} v${myver}
 
 Inspired by 'pacdiff'.
 A simple program to merge or remove sync conflicts.
-Locate is used to find conflicts.
-In case the database is not recent, run 'updatedb'.
 
 Usage: $myname [-o] [--nocolor]
 
@@ -81,6 +80,7 @@ General Options:
 
 Environment Variables:
   DIFFPROG          override the merge program: (default: 'vim -d')
+  SYNCTHING_DIRS    directories to search in (default: '/home/')
 
 Example: DIFFPROG=meld $myname
 Example: $myname --output
@@ -97,7 +97,7 @@ version() {
 cmd() {
     case "$(uname -s)" in
         Darwin) locate -0 sync-conflict;;
-        *) locate -0 -e -b sync-conflict ;;
+        *) find $dirs -type f -name '*sync-conflict*' -print0 ;;
     esac
 }
 
